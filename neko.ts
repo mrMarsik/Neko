@@ -1,4 +1,5 @@
 import * as commands from "./commands";
+import { txtCustom } from "./txt-custom/txt-custom";
 
 
 process.stdin.on("data", (data) => {
@@ -8,7 +9,7 @@ process.stdin.on("data", (data) => {
   if (command) {
     command();
   } else {
-    console.log(`...`);
+//    console.log(txtCustom(`...`));
   }
 });
 

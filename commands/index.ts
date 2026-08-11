@@ -1,2 +1,2 @@
-export * from "./hello";
-export * from "./help";
+export * from "./hello/hello";
+export * from "./help/help";

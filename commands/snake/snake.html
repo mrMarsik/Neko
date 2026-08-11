@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snake</title>
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: #121a2b;
+        --grid: rgba(255, 255, 255, 0.08);
+        --snake: #7ef29a;
+        --snake-head: #d6ffd9;
+        --food: #ff6b6b;
+        --text: #ebf3ff;
+        --muted: #9bb0ce;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle at top, #14213d 0%, var(--bg) 50%);
+        color: var(--text);
+        font-family: Arial, sans-serif;
+      }
+
+      .game-shell {
+        background: rgba(18, 26, 43, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+      }
+
+      .hud {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        padding: 0 6px;
+      }
+
+      .title {
+        font-size: 24px;
+        font-weight: 700;
+      }
+
+      .score {
+        font-size: 20px;
+        color: var(--muted);
+      }
+
+      canvas {
+        display: block;
+        width: 560px;
+        max-width: calc(100vw - 32px);
+        height: auto;
+        background: #0a1120;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+      }
+
+      .hint {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 14px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="game-shell">
+      <div class="hud">
+        <div class="title">Змейка</div>
+        <div class="score">Счёт: <span id="score">0</span></div>
+      </div>
+      <canvas id="game" width="560" height="420"></canvas>
+      <div class="hint">WASD / Стрелки — движение</div>
+    </div>
+
+    <script>
+      const canvas = document.getElementById('game');
+      const ctx = canvas.getContext('2d');
+      const scoreEl = document.getElementById('score');
+
+      const cols = 20;
+      const rows = 15;
+      const tile = Math.min(canvas.width / cols, canvas.height / rows);
+
+      function isInBoard(point) {
+        return point.x >= 0 && point.x < cols && point.y >= 0 && point.y < rows;
+      }
+
+      let snake = [
+        { x: 8, y: 10 },
+        { x: 7, y: 10 },
+        { x: 6, y: 10 },
+      ];
+
+      let direction = { x: 1, y: 0 };
+      let nextDirection = { x: 1, y: 0 };
+      let food = { x: 14, y: 10 };
+      let score = 0;
+      let gameOver = false;
+
+      function placeFood() {
+        const freeCells = [];
+
+        for (let y = 0; y < rows; y += 1) {
+          for (let x = 0; x < cols; x += 1) {
+            const isOccupied = snake.some((segment) => segment.x === x && segment.y === y);
+            if (!isOccupied) {
+              freeCells.push({ x, y });
+            }
+          }
+        }
+
+        if (freeCells.length === 0) {
+          food = { x: 0, y: 0 };
+          return;
+        }
+
+        const nextFood = freeCells[Math.floor(Math.random() * freeCells.length)];
+        food = {
+          x: Math.max(0, Math.min(cols - 1, nextFood.x)),
+          y: Math.max(0, Math.min(rows - 1, nextFood.y)),
+        };
+      }
+
+      function onKeyDown(event) {
+        if (gameOver && event.key.toLowerCase() === 'r') {
+          location.reload();
+          return;
+        }
+
+        const key = event.key.toLowerCase();
+        const map = {
+          arrowup: { x: 0, y: -1 },
+          w: { x: 0, y: -1 },
+          arrowdown: { x: 0, y: 1 },
+          s: { x: 0, y: 1 },
+          arrowleft: { x: -1, y: 0 },
+          a: { x: -1, y: 0 },
+          arrowright: { x: 1, y: 0 },
+          d: { x: 1, y: 0 },
+        };
+
+        const dir = map[key];
+        if (!dir) return;
+
+        const isReverse = dir.x === -direction.x && dir.y === -direction.y;
+        if (!isReverse) {
+          nextDirection = dir;
+        }
+      }
+
+      function update() {
+        if (gameOver) return;
+
+        direction = nextDirection;
+        const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+
+        const hitWall = head.x < 0 || head.x >= cols || head.y < 0 || head.y >= rows;
+        const hitSelf = snake.some((segment) => segment.x === head.x && segment.y === head.y);
+
+        if (hitWall || hitSelf) {
+          gameOver = true;
+          ctx.fillStyle = '#0b1020';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 42px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2 - 10);
+          ctx.font = '20px Arial';
+          ctx.fillStyle = '#9bb0ce';
+          ctx.fillText('R — новая игра', canvas.width / 2, canvas.height / 2 + 30);
+          return;
+        }
+
+        snake.unshift(head);
+
+        if (head.x === food.x && head.y === food.y) {
+          score += 1;
+          scoreEl.textContent = String(score);
+          placeFood();
+        } else {
+          snake.pop();
+        }
+      }
+
+      function drawGrid() {
+        ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+        ctx.lineWidth = 1;
+
+        for (let x = 0; x <= cols; x += 1) {
+          ctx.beginPath();
+          ctx.moveTo(x * tile, 0);
+          ctx.lineTo(x * tile, canvas.height);
+          ctx.stroke();
+        }
+
+        for (let y = 0; y <= rows; y += 1) {
+          ctx.beginPath();
+          ctx.moveTo(0, y * tile);
+          ctx.lineTo(canvas.width, y * tile);
+          ctx.stroke();
+        }
+      }
+
+      function drawFood() {
+        if (!isInBoard(food)) {
+          placeFood();
+        }
+
+        const cx = food.x * tile + tile / 2;
+        const cy = food.y * tile + tile / 2;
+        const radius = Math.min(tile * 0.28, 10);
+
+        ctx.fillStyle = '#ff4d4d';
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#2ecc71';
+        ctx.beginPath();
+        ctx.moveTo(cx + 2, cy - radius + 2);
+        ctx.quadraticCurveTo(cx + 8, cy - radius - 8, cx + 12, cy - radius + 2);
+        ctx.quadraticCurveTo(cx + 4, cy - radius + 6, cx + 2, cy - radius + 2);
+        ctx.fill();
+
+        ctx.strokeStyle = '#1d8f4f';
+        ctx.beginPath();
+        ctx.moveTo(cx + 8, cy - radius + 2);
+        ctx.lineTo(cx + 8, cy - radius - 6);
+        ctx.stroke();
+      }
+
+      const rainbowColors = ['#ff4d4d', '#ff8c42', '#ffd93d', '#3ecf8e', '#4da3ff', '#a855f7', '#ff66c4'];
+
+      function draw() {
+        ctx.fillStyle = '#0a1120';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        drawGrid();
+        drawFood();
+
+        snake.forEach((segment, index) => {
+          const x = segment.x * tile + 1;
+          const y = segment.y * tile + 1;
+          const color = rainbowColors[index % rainbowColors.length];
+          ctx.fillStyle = index === 0 ? '#ffffff' : color;
+          ctx.fillRect(x + 1, y + 1, tile - 3, tile - 3);
+        });
+      }
+
+      document.addEventListener('keydown', onKeyDown);
+      placeFood();
+      setInterval(() => {
+        update();
+        draw();
+      }, 110);
+    </script>
+  </body>
+</html>

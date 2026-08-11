@@ -7,6 +7,8 @@ process.stdin.on("data", (data) => {
   
   if (command) {
     command();
+  } else {
+    console.log(`...`);
   }
 });
 

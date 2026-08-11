@@ -1,5 +1,5 @@
 import fs from "fs";
-import { txtCustom } from "../../txt-custom/txt-custom"
+import { txtCustom } from "../../txt-custom/txt-custom";
 
 
 export function hello() {

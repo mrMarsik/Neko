@@ -2,14 +2,21 @@ import * as commands from "./commands";
 import { txtCustom } from "./txt-custom/txt-custom";
 
 
-process.stdin.on("data", (data) => {
-  const text = data.toString().trim() as keyof typeof commands;
-  const command = commands[text];
-  
-  if (command) {
-    command();
-  } else {
-//    console.log(txtCustom(`...`));
-  }
-});
+function nekoCall(data: Buffer) {
+  const text = data.toString().trim()
+  const command = commands[text as keyof typeof commands]
 
+  if (command?.consoleOff) {
+    process.stdin.off("data", nekoCall)
+  }
+
+  if (command.run) {
+    command.run()
+  }
+
+  if (command?.consoleOn) {
+    process.stdin.on("data", nekoCall)
+  }  
+}
+
+process.stdin.on("data", nekoCall)

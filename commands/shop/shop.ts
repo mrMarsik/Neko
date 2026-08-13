@@ -1,19 +1,30 @@
 import { txtCustom } from "../../txt-custom/txt-custom";
 
 
-
-
-function shop(data: Buffer) {
-  const text = data.toString().trim();
-  
-  if (text === "exit") {
-    console.log(txtCustom("ok"))
-    process.stdin.off("data", shop);
-    return;
-  }
-  
-  const test = "Welcome to the shop! Here you can buy items and upgrades for your character."
-  console.log(txtCustom(test))
+export const shop = {
+  consoleOff: true,
+  consoleOn: false,
+  run: shopRun, 
 }
 
-process.stdin.on("data", shop);
+
+function shopRun() {
+  console.log(
+    txtCustom("Welcome to the shop! Here you can buy items and upgrades for your character.")
+  );
+
+  function shopCall(data: Buffer) {
+    const text = data.toString().trim();
+
+    if (text === "exit") {
+      console.log(txtCustom("ok"));
+      process.stdin.off("data", shopCall);
+
+      return;
+    }
+
+    console.log(txtCustom(`shop input: ${text}`));
+  }
+
+  process.stdin.on("data", shopCall);
+}

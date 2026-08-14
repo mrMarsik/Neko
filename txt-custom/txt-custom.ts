@@ -1,3 +1,3 @@
 export function txtCustom(text: string) {
-  return `${text}`
+  return `\n${text}\n`
 }

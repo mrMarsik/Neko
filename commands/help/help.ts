@@ -5,6 +5,8 @@ import { txtCustom } from "../../txt-custom/txt-custom"
 export const help = {
   consoleOff: false,
   consoleOn: false,
+  nekoOff: false,
+  active: false,
   run: helpRun, 
 }
 

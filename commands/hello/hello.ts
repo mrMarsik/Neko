@@ -4,6 +4,8 @@ import { txtCustom } from "../../txt-custom/txt-custom";
 export const hello = {
   consoleOff: false,
   consoleOn: false,
+  nekoOff: false,
+  active: false,
   run: helloRun, 
 }
 

@@ -1,7 +1,8 @@
 import { Message } from "discord.js"
 import { Player } from "discord-player"
 import { YouTubeDlpExtractor } from "discord-player-youtubedlp"
-
+import { music as replies } from "../../replies"
+import { txtCustom } from "../../../txt-custom/txt-custom"
 
 let player: Player | null = null
 let initialized = false
@@ -46,7 +47,7 @@ async function musicRun(message: Message) {
   const channel = message.member?.voice.channel
 
   if (!channel) {
-    await message.reply("come to a voice")
+    await message.reply(replies.joinVoice)
     return
   }
 
@@ -56,7 +57,7 @@ async function musicRun(message: Message) {
     .trim()
 
   if (!query) {
-    await message.reply("Write the name of the song")
+    await message.reply(replies.enterSong)
     return
   }
 
@@ -78,15 +79,12 @@ async function musicRun(message: Message) {
     )
 
 
-    await message.reply(
-      `▶ ${result.track.title}`
-    )
-
+    await message.reply(replies.trackTitle.replace("{0}", result.track.title))
   } catch (error) {
     console.error("MUSIC ERROR:", error)
 
     await message.reply(
-      "❌ Error while trying to play music"
+      replies.musicError
     )
   }
 }

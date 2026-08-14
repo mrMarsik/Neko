@@ -49,7 +49,6 @@ client.on("messageCreate", async (message) => {
   if (!command) return
 
   command.run(message)
-  message.reply(`Command ${text} executed!`)
 })
 
 client.once("clientReady", () => {

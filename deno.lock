@@ -1,0 +1,27 @@
+{
+  "version": "5",
+  "specifiers": {
+    "jsr:@deno/installer-shell-setup@*": "0.3.4"
+  },
+  "jsr": {
+    "@deno/installer-shell-setup@0.3.4": {
+      "integrity": "48665d1a737d487cce6874bc97bba70a5aeffa7053aca3f60df93c6fab8963b4"
+    }
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@discordjs/voice@~0.19.2",
+        "npm:@types/node@^26.2.0",
+        "npm:discord-player-youtubedlp@^1.1.8",
+        "npm:discord-player@^7.2.0",
+        "npm:discord.js@^14.27.0",
+        "npm:dotenv@^17.4.2",
+        "npm:libsodium-wrappers@~0.8.4",
+        "npm:play-dl@^1.9.7",
+        "npm:ts-node@^10.9.2",
+        "npm:typescript@^7.0.2"
+      ]
+    }
+  }
+}

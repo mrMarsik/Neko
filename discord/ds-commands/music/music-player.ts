@@ -13,6 +13,7 @@ import {
 } from "@discordjs/voice"
 
 import { Renderer } from "./modules/renderer"
+import { Buttons } from "./modules/buttons"
 import { Finder } from "./modules/finder"
 import { Initializer } from "./modules/Initializer"
 
@@ -22,21 +23,14 @@ export class MusicPlayer {
   renderer: Renderer
   initializer: Initializer
   message: Message
-
   player: Player | null = null
   audioPlayer = createAudioPlayer()
-
   init = false
 
 
   constructor(message: Message) {
     this.message = message
-
-    this.renderer = new Renderer(
-      message,
-      this.audioPlayer
-    )
-
+    this.renderer = new Renderer(message, this.audioPlayer)
     this.finder = new Finder(message)
     this.initializer = new Initializer(message)
   }
@@ -116,7 +110,7 @@ export class MusicPlayer {
   async musicRun() {
     const channel = this.message.member?.voice.channel
 
-    
+
     if (!channel) {
       await this.message.reply(replies.joinVoice)
       return
@@ -140,11 +134,14 @@ export class MusicPlayer {
 
 
     try {
-      const songData =
-        await this.finder.findMusic(query)
+      
+      const songData = await this.finder.findMusic(query)
 
-      const url = songData?.url
-      const title = songData?.title
+      
+      const firstSong = songData?.[0]
+      
+      const url = firstSong?.url
+      const title = firstSong?.title
 
 
       if (!url || !title) {
@@ -162,8 +159,18 @@ export class MusicPlayer {
         return
       }
 
+      try {
 
-      await this.renderer.renderPlayer(title)
+        await this.renderer.renderPlayer(songData)
+
+      } catch (error) {
+
+        await this.message.reply(
+        replies.renderError
+
+      )
+
+      }
 
     } catch (error) {
       console.error("MUSIC ERROR:", error)

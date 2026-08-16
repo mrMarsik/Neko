@@ -5,7 +5,7 @@ import {
 } from "discord.js"
 
 
-export class MusicButtons {
+export class Buttons {
   pause() {}
 
   stop() {}

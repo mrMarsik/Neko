@@ -7,6 +7,7 @@ export const music = {
   enterSong: txtCustom("name of song or link", 'discord'),
   notFound: txtCustom("i won't turn on this shit.", 'discord'),
   musicError: txtCustom("❌ Error while trying to play music", 'discord'),
+  renderError: txtCustom("render error", "discord")
 }
 
 

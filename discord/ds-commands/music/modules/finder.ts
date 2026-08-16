@@ -11,24 +11,24 @@ export class Finder {
 
    async findMusic(query: string) {
     const results = await play.search(query, {
-      limit: 1
+      limit: 10
     })
 
-    const track = results[0]
+    const trackArr = results
 
-    if (!track) {
+    if (!trackArr) {
       return null
     }
 
-    console.log("FOUND:", track.title)
-    console.log("URL:", track.url)
+    console.log("FOUND:", trackArr[0].title)
+    console.log("URL:", trackArr[0].url)
 
     if (this.message.channel.isSendable()) {
         await this.message.channel.send(
-          track.url
+          trackArr[0].url
         )
       }
 
-    return track
+    return trackArr
   }
 }

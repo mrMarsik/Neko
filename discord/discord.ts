@@ -1,4 +1,4 @@
-import * as commands from "./ds-commands";
+import { commands } from "./ds-commands"
 import "dotenv/config"
 
 
@@ -41,14 +41,12 @@ client.on("messageCreate", async (message) => {
   if (message.author.bot) return
 
   const text = message.content.trim()
-  const textArray = text.split(" ")
+  const textF = text.split(" ")[0] as keyof typeof commands
+  const command = commands[textF]
 
-  const command = commands[textArray[0] as keyof typeof commands]
-  const args = textArray.slice(1)
+if (!command) return
 
-  if (!command) return
-
-  command.run(message)
+command.run(message)
 })
 
 client.once("clientReady", () => {

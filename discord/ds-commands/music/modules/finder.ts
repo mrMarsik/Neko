@@ -13,7 +13,10 @@ export class Finder {
     const results = await play.search(query, {
       limit: 10
     })
-
+    
+    if (!results.length) {
+      return null
+}
     const trackArr = results
 
     if (!trackArr) {

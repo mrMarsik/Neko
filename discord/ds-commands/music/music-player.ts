@@ -1,63 +1,37 @@
 import { Message } from "discord.js"
-import { Player } from "discord-player"
-import { music as replies } from "../../replies"
 import { spawn } from "node:child_process"
 
 import {
-  joinVoiceChannel,
-  entersState,
-  VoiceConnectionStatus,
-  createAudioPlayer,
   createAudioResource,
-  StreamType
+  StreamType,
+  VoiceConnection
 } from "@discordjs/voice"
 
+import { music as replies } from "../../replies"
+
 import { Renderer } from "./modules/renderer"
-import { Buttons } from "./modules/buttons"
 import { Finder } from "./modules/finder"
 import { Initializer } from "./modules/Initializer"
 
 
 export class MusicPlayer {
+  message: Message
+
   finder: Finder
   renderer: Renderer
   initializer: Initializer
-  message: Message
-  player: Player | null = null
-  audioPlayer = createAudioPlayer()
-  init = false
 
 
   constructor(message: Message) {
     this.message = message
-    this.renderer = new Renderer(message, this.audioPlayer)
+
     this.finder = new Finder(message)
+    this.renderer = new Renderer(message)
     this.initializer = new Initializer(message)
   }
 
 
-  async createPlayer(url: string) {
-    const channel = this.message.member?.voice.channel
-
-    if (!channel) {
-      return null
-    }
-
-
-    const connection = joinVoiceChannel({
-      channelId: channel.id,
-      guildId: channel.guild.id,
-      adapterCreator: channel.guild.voiceAdapterCreator
-    })
-
-
-    await entersState(
-      connection,
-      VoiceConnectionStatus.Ready,
-      30_000
-    )
-
-
+  createResource(url: string) {
     const ytDlp = spawn(
       "yt-dlp",
       [
@@ -88,92 +62,98 @@ export class MusicPlayer {
     )
 
 
-    const resource = createAudioResource(
+    return createAudioResource(
       ytDlp.stdout,
       {
         inputType: StreamType.Arbitrary
       }
     )
+  }
 
 
-    connection.subscribe(this.audioPlayer)
+  play(
+    resource: ReturnType<typeof createAudioResource>,
+    connection: VoiceConnection
+  ) {
+    const audioPlayer =
+      this.initializer.getAudioPlayer()
 
-    this.audioPlayer.play(resource)
 
+    connection.subscribe(audioPlayer)
 
-    console.log("PLAYING:", url)
+    audioPlayer.play(resource)
 
-    return this.audioPlayer
+    return audioPlayer
   }
 
 
   async musicRun() {
-    const channel = this.message.member?.voice.channel
-
-
-    if (!channel) {
-      await this.message.reply(replies.joinVoice)
-      return
-    }
-
-
-    if (!this.player) {
-      await this.initializer.initPlayer()
-    }
-
-
-    const query = this.message.content
-      .replace(/^music\s*/i, "")
-      .trim()
+    const query = this.message.content.slice(1)
 
 
     if (!query) {
-      await this.message.reply(replies.enterSong)
+      await this.message.reply(
+        replies.enterSong
+      )
+
       return
     }
 
 
     try {
-      
-      const songData = await this.finder.findMusic(query)
 
-      
-      const firstSong = songData?.[0]
-      
-      const url = firstSong?.url
-      const title = firstSong?.title
+      // init
+      const connection = await this.initializer.connectVoice()
 
+      if (!connection) {
+        await this.message.reply(
+          replies.joinVoice
+        )
 
-      if (!url || !title) {
-        await this.message.reply(replies.notFound)
         return
       }
 
 
-      const result =
-        await this.createPlayer(url)
+      // find
+      const songs = await this.finder.findMusic(query)
+      const firstSong = songs?.[0]
 
+      if (!firstSong?.url || !firstSong?.title) {
+        await this.message.reply(
+          replies.notFound
+        )
 
-      if (!result) {
-        await this.message.reply(replies.joinVoice)
         return
       }
 
+
+      // play
+      const resource = this.createResource(firstSong.url)
+      this.play(resource, connection)
+
+
+      // render
       try {
-
-        await this.renderer.renderPlayer(songData)
-
+        await this.renderer.renderPlayer(
+          songs
+        )
       } catch (error) {
+        console.error(
+          "RENDER ERROR:",
+          error
+        )
 
         await this.message.reply(
-        replies.renderError
-
-      )
-
+          replies.renderError
+        )
       }
 
+
     } catch (error) {
-      console.error("MUSIC ERROR:", error)
+      console.error(
+        "MUSIC ERROR:",
+        error
+      )
 
       await this.message.reply(
         replies.musicError

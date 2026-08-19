@@ -11,14 +11,10 @@ import { YouTubeVideo } from "play-dl"
 
 export class Renderer {
   message: Message
-  player: AudioPlayer
-  playNow: boolean
 
   
-  constructor(message: Message, player: AudioPlayer) {
+  constructor(message: Message) {
     this.message = message
-    this.player = player
-    this.playNow = true
   }
 
 
@@ -65,7 +61,7 @@ export class Renderer {
       songRow.addComponents(button)
       songs.set(id, song)
 
-
+      
       const playerMessage = await this.message.channel.send({
       content: `▶ ${currentTitle}`,
       components: [buttonRow, songRow]
@@ -77,15 +73,15 @@ export class Renderer {
 
       const song = songs.get(interaction.customId)
 
-      if (song) {
+      // if (song) {
 
-        const stream = await play.stream(song.url)
-        const resource = createAudioResource(stream.stream, { inputType: stream.type })
+      //   const stream = await play.stream(song.url)
+      //   const resource = createAudioResource(stream.stream, { inputType: stream.type })
 
-        this.player.play(resource)
-      }
+      //   this.player.play(resource)
+      // }
 
-      await interaction.deferUpdate()
+      // await interaction.deferUpdate()
       })
     }
 
@@ -102,28 +98,28 @@ export class Renderer {
     const collector = playerMessage.createMessageComponentCollector()
 
 
-    collector.on("collect", async (interaction) => {
-      if (!interaction.isButton()) return
+    // collector.on("collect", async (interaction) => {
+    //   if (!interaction.isButton()) return
 
 
-      if (interaction.customId === "PAUSE") {
-        if (this.playNow) {
-          this.player.pause()
-          this.playNow = false
+    //   if (interaction.customId === "PAUSE") {
+    //     if (this.playNow) {
+    //       this.player.pause()
+    //       this.playNow = false
 
-        } else {
-          this.player.unpause()
-          this.playNow = true
-        }
-      }
-
-
-      if (interaction.customId === "STOP") {
-        this.player.stop()
-      }
+    //     } else {
+    //       this.player.unpause()
+    //       this.playNow = true
+    //     }
+    //   }
 
 
-      await interaction.deferUpdate()
-    })
+    //   if (interaction.customId === "STOP") {
+    //     this.player.stop()
+    //   }
+
+
+    //   await interaction.deferUpdate()
+    // })
   }
 }

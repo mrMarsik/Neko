@@ -8,6 +8,6 @@ export const music = {
 
 
 function musicRun(message: Message) {
-  const nekoPlayer = new MusicPlayer(message)
-  nekoPlayer.musicRun()
+  const musicPlayer = new MusicPlayer(message)
+  musicPlayer.musicRun()
 }

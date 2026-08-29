@@ -6,7 +6,7 @@ export const shop = {
     active: false,
     run: shopRun,
 };
-function shopRun() {
+function shopRun(context) {
     if (shop.active) {
         return;
     }

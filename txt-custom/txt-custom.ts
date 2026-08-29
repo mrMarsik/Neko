@@ -32,6 +32,10 @@ function discordMusicPlayer(text : string) {
 }
 
 
+function def(text : string) {
+  return text
+}
+
 
 // ┌ ┐ └ ┘ ─ │ ├ ┤ ┬ ┴ ┼
 // ╔ ╗ ╚ ╝ ═ ║ ╠ ╣ ╦ ╩ ╬

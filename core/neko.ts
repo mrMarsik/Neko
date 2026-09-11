@@ -1,6 +1,6 @@
 import { DiscordAdapter } from "../adapters/discord/discord"
 
-import { ToxicCommand } from "../modules/toxic/toxic-command"
+
 import { MusicCommand } from "../modules/music/music-command"
 import { commands } from "../modules"
 import test from "node:test"
@@ -8,12 +8,11 @@ import test from "node:test"
 export class Neko {
   discord: DiscordAdapter
   music: MusicCommand
-  toxic: ToxicCommand
+
 
   constructor() {
     this.discord = new DiscordAdapter()
     this.music = new MusicCommand()
-    this.toxic = new ToxicCommand()
   }
 
 
@@ -36,7 +35,7 @@ export class Neko {
           }
         }
         
-        this.toxic.run(message)
+
       }
     )
 

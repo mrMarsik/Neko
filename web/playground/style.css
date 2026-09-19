@@ -1,0 +1,8 @@
+#neko {
+  height: 300px;
+  width: 300px;
+  background-color: purple;
+  position: relative;
+  top: 50%;
+  left: 50%;
+}

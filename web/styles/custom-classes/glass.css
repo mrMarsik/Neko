@@ -1,0 +1,12 @@
+.blur {
+  position: absolute;
+  inset: 0;
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+
+.dark-glass {
+  background: rgba(0, 0, 0, 0.5);
+}

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head id="head">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="style2.css">
+  <link rel="stylesheet" href="./styles/app.css">
+
   <script src="script.js" type="module" defer></script>
 </head>
 
@@ -15,8 +15,7 @@
     <main class="neko-chat">
 
     
-      <div class="chat-header">
-        
+      <header class="header">
         <svg
           viewBox="0 0 100 100"
           xmlns="http://www.w3.org/2000/svg"
@@ -26,26 +25,69 @@
           stroke-linecap="round"
           stroke-linejoin="round"
         >
-          <!-- N -->
           <path d="M24 82 V36 L76 82 V36" />
 
-          <!-- soft cat ears -->
           <path d="M19 35 C20 27 22 18 27 13 C33 18 38 24 40 31" />
           <path d="M60 31 C63 24 68 18 74 13 C78 19 80 27 81 35" />
         </svg>
 
+        <section>
+          <nav>
+            <span class="neko-name">Neko</span>
+            <span class="status-on">●</span>
+          </nav>
+
+          <span class="neko-subtitle">Your personal companion ♡</span>
+        </section>
+
+        <nav>
+          <button id="mute">...</button>
+          <button id="fullscreen">...</button>
+          <button id="call">...</button>
+        </nav>
+      </header>
+
+      <div class="screen glow-border">
+        
+        <div class="screen-background">
+          <img src="../img/background-web/camera.png" alt="web">
+          <div class="dark-glass blur"></div>
+        </div>
+  
+        <div id="neko-avatar" class="center-x"> 
+          <img src="../img/neko-avatar/neko-mini/bored.png" alt="">
+        </div> 
       </div>
 
-      <div class="neko-screen">
-        <img src="../img/background-web/camera.png" alt="veb">
-        <div class=" blur"></div>
-      </div>
+      <section class="messages">
 
-      <div class="messages">sdf</div>
+      </section>
+        
+      <div class="typing"></div>
 
-      <div class="typing">sdf</div>
+      <nav class="input ">
 
-      <div class="input">sdf</div>
+        <nav class="message-input lite-glow-border">
+
+          <input id="message-input" type="text" placeholder="Type a message...">
+          
+        </nav>
+
+        <button id="send" class="lite-glow-border square">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M22 2 11 13" />
+            <path d="m22 2-7 20-4-9-9-4Z" />
+          </svg>
+        </button>
+
+      </nav>
   
 
     </main>

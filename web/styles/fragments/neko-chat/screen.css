@@ -1,0 +1,17 @@
+.neko-chat .screen {
+  border-radius: 2vw;
+  position: relative;
+
+  height: 30%;
+  
+  overflow: hidden;
+}
+
+
+
+.neko-chat #neko-avatar {
+  position: absolute;
+  bottom: -2%;
+  
+  height: 90%;
+}

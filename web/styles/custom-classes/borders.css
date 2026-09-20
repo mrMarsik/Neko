@@ -1,0 +1,13 @@
+.glow-border {
+  border: 0.1vh solid rgba(196, 121, 245, 0.35);
+
+  box-shadow:
+    inset 0 0 12px rgba(196, 121, 245, 0.08),
+    0 0 12px rgba(196, 121, 245, 0.12);
+}
+
+.lite-glow-border {
+
+  border: 0.01vh solid rgba(196, 121, 245, 0.15);
+  
+}

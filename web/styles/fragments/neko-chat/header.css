@@ -1,0 +1,40 @@
+
+
+.neko-chat .header {
+  height: 10%;
+  gap: 1vw;
+}
+
+
+
+.neko-chat .header svg {
+  height: 100%;
+  width: auto;
+}
+
+
+
+.neko-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.neko-title {
+  gap: 0.4vw;
+}
+
+.neko-name {
+  font-size: 1.5vw;
+  font-weight: 600;
+}
+
+.neko-subtitle {
+  font-size: 1vw;
+  opacity: 0.65;
+}
+
+.status-on {
+  color: #1be26e;
+  font-size: 1.3vw;
+}

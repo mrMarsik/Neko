@@ -3,7 +3,7 @@ import { DiscordAdapter } from "../adapters/discord/discord"
 
 import { MusicCommand } from "../modules/music/music-command"
 import { commands } from "../modules"
-import test from "node:test"
+
 
 export class Neko {
   discord: DiscordAdapter

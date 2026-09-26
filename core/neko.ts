@@ -1,47 +1,42 @@
-import { DiscordAdapter } from "../adapters/discord/discord"
+import { WebSocketServer } from 'ws'
 
 
-import { MusicCommand } from "../modules/music/music-command"
-import { commands } from "../modules"
+class Neko {
 
-
-export class Neko {
-  discord: DiscordAdapter
-  music: MusicCommand
-
-
-  constructor() {
-    this.discord = new DiscordAdapter()
-    this.music = new MusicCommand()
-  }
+  private socket = new WebSocketServer({
+    port: 2000
+  })
 
 
   start() {
-    this.discord.onMessage(
-      async message => {
-        console.log(message)
-        const text = message.content.trim()
+    console.log('Neko: ws://localhost:2000')
 
-        const commandName = text.split(" ")[0].toLowerCase()
-        const command = commands[ commandName as keyof typeof commands ]
+    this.socket.on('connection', client => {
+
+      console.log('Neko → Bridge')
 
 
-        if (command) {
-          if (command.config.adapters.includes('discord')) {
+      client.on('message', async message => {
+        const response = await this.receive(message.toString())
 
-            const module = new command.module
-            await module.run(message)
+        client.send(response)
+      })
 
-          }
-        }
-        
-
-      }
-    )
-
-
-    this.discord.start()
+    })
   }
+
+
+  async receive(input: string) {
+    console.log('Neko received:', input)
+
+    return this.think(input)
+  }
+
+
+  private async think(input: string) {
+    return `Neko: ${input}`
+  }
+
 }
 
 

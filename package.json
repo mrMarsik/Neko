@@ -4,10 +4,14 @@
   "private": true,
   "scripts": {
     "start": "npx ts-node ./neko.ts",
-    "build": "npx tsc"
+    "build": "npx tsc",
+    "dev": "nodemon --watch core --watch bridge --watch web --ext ts --exec \"concurrently --kill-others 'npx tsx core/neko.ts' 'npx tsx bridge/socket.ts' 'npx tsx web/server.ts'\""
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^26.2.0",
+    "@types/ws": "^8.18.1",
+    "concurrently": "^9.2.4",
     "ts-node": "^10.9.2",
     "typescript": "^7.0.2"
   },
@@ -17,7 +21,10 @@
     "discord-player-youtubedlp": "^1.1.8",
     "discord.js": "^14.27.0",
     "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "libsodium-wrappers": "^0.8.4",
-    "play-dl": "^1.9.7"
+    "play-dl": "^1.9.7",
+    "playwright": "^1.61.1",
+    "ws": "^8.21.3"
   }
 }

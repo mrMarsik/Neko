@@ -1,7 +1,8 @@
- export default class NekoChat {
+export default class NekoChat {
 
-  constructor(element) {
+  constructor(element, socket) {
     this.element = element
+    this.socket = socket
 
     this.screen = element.querySelector('.screen')
     this.messages = element.querySelector('.messages')
@@ -15,7 +16,21 @@
 
 
   init() {
-    this.send.addEventListener('click', () => this.sendMessage())
+    this.send.disabled = true
+
+    this.socket.addEventListener('open', () => {
+      console.log('Neko connected')
+
+      this.send.disabled = false
+    })
+
+    this.socket.addEventListener('message', event => {
+      this.addMessage(event.data, 'neko')
+    })
+
+    this.send.addEventListener('click', () => {
+      this.sendMessage()
+    })
 
     this.input.addEventListener('keydown', event => {
       if (event.key === 'Enter') {
@@ -29,6 +44,9 @@
     const text = this.input.value.trim()
 
     if (!text) return
+    if (this.socket.readyState !== WebSocket.OPEN) return
+
+    this.socket.send(text)
 
     this.addMessage(text, 'user')
     this.input.value = ''
@@ -42,6 +60,7 @@
     message.textContent = text
 
     this.messages.append(message)
+
     this.scrollDown()
   }
 
@@ -51,3 +70,8 @@
   }
 
 }
+
+
+const socket = new WebSocket('ws://localhost:2002')
+
+new NekoChat(document, socket)

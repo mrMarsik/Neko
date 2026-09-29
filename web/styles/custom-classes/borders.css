@@ -9,3 +9,8 @@
 .lite-glow-border {
   border: 0.01vh solid rgba(196, 121, 245, 0.15);
 }
+
+
+.dark-border {
+  border-bottom: 2px solid #4a3452;
+}

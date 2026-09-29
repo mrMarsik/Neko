@@ -41,16 +41,23 @@ export default class NekoChat {
 
 
   sendMessage() {
-    const text = this.input.value.trim()
+  const text = this.input.value.trim()
 
-    if (!text) return
-    if (this.socket.readyState !== WebSocket.OPEN) return
+  if (!text) return
+  if (this.socket.readyState !== WebSocket.OPEN) return
 
-    this.socket.send(text)
+  const packet = {
+  id: crypto.randomUUID(),
+  type: 'text',
+  content: text,
+  timestamp: Date.now()
+}
 
-    this.addMessage(text, 'user')
-    this.input.value = ''
-  }
+this.socket.send(JSON.stringify(packet))
+
+  this.addMessage(text, 'user')
+  this.input.value = ''
+}
 
 
   addMessage(text, author) {

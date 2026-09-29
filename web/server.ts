@@ -16,7 +16,7 @@ class WebServer {
 
 
     this.bridge.on('open', () => {
-      console.log('Web → Bridge')
+      console.log('→ Bridge')
     })
 
 
@@ -40,7 +40,7 @@ class WebServer {
 
 
     this.server = this.app.listen(2002, () => {
-      console.log('Server: http://localhost:2002')
+      console.log('http://localhost:2002')
     })
 
 
@@ -49,21 +49,30 @@ class WebServer {
     })
 
 
-    socket.on('connection', browser => {
+    socket.on('connection', (browser, request) => {
+      const ip = request.socket.remoteAddress ?? 'unknown'
+
+      console.log('Browser → Web connected:', ip)
+
 
       browser.on('message', message => {
         if (this.bridge.readyState !== WebSocket.OPEN) return
 
-        this.bridge.send(message.toString())
+        const packet = JSON.parse(message.toString())
+
+        packet.author = ip
+
+        this.bridge.send(JSON.stringify(packet))
       })
 
 
       this.bridge.on('message', message => {
         if (browser.readyState !== WebSocket.OPEN) return
 
-        browser.send(message.toString())
-      })
+        const packet = JSON.parse(message.toString())
 
+        browser.send(packet.content)
+      })
     })
   }
 

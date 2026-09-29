@@ -10,7 +10,7 @@ function connectNeko() {
 
 
   neko.on('open', () => {
-    console.log('Bridge → Neko')
+    console.log('→ Neko')
   })
 
 
@@ -43,7 +43,7 @@ const bridge = new WebSocketServer({
 bridge.on('connection', client => {
   web = client
 
-  console.log('Bridge → Web')
+  console.log('→ Web')
 
 
   client.on('message', message => {
@@ -61,4 +61,4 @@ bridge.on('connection', client => {
 })
 
 
-console.log('Bridge: ws://localhost:2001')
+console.log('ws://localhost:2001')

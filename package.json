@@ -5,12 +5,13 @@
   "scripts": {
     "start": "npx ts-node ./neko.ts",
     "build": "npx tsc",
-    "dev": "nodemon --watch core --watch bridge --watch web --ext ts --exec \"concurrently --kill-others 'npx tsx core/neko.ts' 'npx tsx bridge/socket.ts' 'npx tsx web/server.ts'\""
+    "dev": "./dev.sh" 
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/node": "^26.2.0",
     "@types/ws": "^8.18.1",
+    "browser-sync": "^3.0.4",
     "concurrently": "^9.2.4",
     "ts-node": "^10.9.2",
     "typescript": "^7.0.2"

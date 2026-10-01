@@ -3,28 +3,30 @@ import WebSocket, { WebSocketServer } from 'ws'
 
 let neko: WebSocket
 let web: WebSocket | null = null
+let discord: WebSocket | null = null
+
+let bridge: WebSocketServer
+
+
+function initBridge() {
+  bridge = new WebSocketServer({
+    port: 2001
+  })
+
+  console.log('ws://localhost:2001')
+}
 
 
 function connectNeko() {
   neko = new WebSocket('ws://localhost:2000')
 
-
   neko.on('open', () => {
     console.log('→ Neko')
   })
 
-
-  neko.on('message', message => {
-    if (web?.readyState !== WebSocket.OPEN) return
-
-    web.send(message.toString())
-  })
-
-
   neko.on('close', () => {
     setTimeout(connectNeko, 1000)
   })
-
 
   neko.on('error', () => {
     neko.close()
@@ -32,33 +34,53 @@ function connectNeko() {
 }
 
 
-connectNeko()
+function connectWeb() {
+  web = new WebSocket('ws://localhost:2002')
 
 
-const bridge = new WebSocketServer({
-  port: 2001
-})
-
-
-bridge.on('connection', client => {
-  web = client
-
-  console.log('→ Web')
-
-
-  client.on('message', message => {
-    if (neko.readyState !== WebSocket.OPEN) return
-
-    neko.send(message.toString())
+  web.on('open', () => {
+    console.log('→ Web')
   })
 
 
-  client.on('close', () => {
-    if (web === client) {
-      web = null
-    }
+  web.on('close', () => {
+    setTimeout(connectWeb, 1000)
   })
-})
 
 
-console.log('ws://localhost:2001')
+  web.on('error', () => {
+    web?.close()
+  })
+}
+
+
+function connectDiscord() {
+    discord = new WebSocket('ws://localhost:2003')
+
+
+  discord.on('open', () => {
+    console.log('→ Discord')
+  })
+
+
+  discord.on('close', () => {
+    setTimeout(connectDiscord, 1000)
+  })
+
+
+  discord.on('error', () => {
+    discord?.close()
+  })
+}
+
+
+function start() {
+  initBridge()
+
+  connectNeko()
+  connectWeb()
+  connectDiscord()
+}
+
+
+start()

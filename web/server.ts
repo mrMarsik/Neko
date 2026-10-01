@@ -1,82 +1,66 @@
 import express from 'express'
 import path from 'path'
-import WebSocket, { WebSocketServer } from 'ws'
+import { WebSocketServer, WebSocket } from 'ws'
 import type { Server } from 'http'
 
-
-class WebServer {
-
-  private app = express()
-  private server: Server | null = null
-  private bridge!: WebSocket
+import type { Packet } from '../core/types'
 
 
-  private connectBridge() {
-    this.bridge = new WebSocket('ws://localhost:2001')
+const app = express()
+
+let server: Server
+let bridge: WebSocket | null = null
 
 
-    this.bridge.on('open', () => {
-      console.log('→ Bridge')
+function start() {
+  const webPath = path.join(process.cwd(), 'web')
+
+  app.use(express.static(webPath))
+
+
+  server = app.listen(2002, () => {
+    console.log('http://localhost:2002')
+  })
+
+
+  const socket = new WebSocketServer({
+    server
+  })
+
+
+  socket.on('connection', client => {
+    bridge = client
+
+    console.log('→ Bridge')
+
+
+    client.on('message', message => {
+      const packet: Packet = JSON.parse(message.toString())
+
+      receive(packet)
     })
 
 
-    this.bridge.on('close', () => {
-      setTimeout(() => this.connectBridge(), 1000)
+    client.on('close', () => {
+      if (bridge === client) {
+        bridge = null
+      }
     })
-
-
-    this.bridge.on('error', () => {
-      this.bridge.close()
-    })
-  }
-
-
-  start() {
-    this.connectBridge()
-
-    const webPath = path.join(process.cwd(), 'web')
-
-    this.app.use(express.static(webPath))
-
-
-    this.server = this.app.listen(2002, () => {
-      console.log('http://localhost:2002')
-    })
-
-
-    const socket = new WebSocketServer({
-      server: this.server
-    })
-
-
-    socket.on('connection', (browser, request) => {
-      const ip = request.socket.remoteAddress ?? 'unknown'
-
-      console.log('Browser → Web connected:', ip)
-
-
-      browser.on('message', message => {
-        if (this.bridge.readyState !== WebSocket.OPEN) return
-
-        const packet = JSON.parse(message.toString())
-
-        packet.author = ip
-
-        this.bridge.send(JSON.stringify(packet))
-      })
-
-
-      this.bridge.on('message', message => {
-        if (browser.readyState !== WebSocket.OPEN) return
-
-        const packet = JSON.parse(message.toString())
-
-        browser.send(packet.content)
-      })
-    })
-  }
-
+  })
 }
 
 
-new WebServer().start()
+function receive(packet: Packet) {
+  console.log('←', packet)
+  send(packet)
+}
+
+
+function send(packet: Packet) {
+  if (bridge?.readyState !== WebSocket.OPEN) return
+
+  bridge.send(JSON.stringify(packet))
+}
+
+
+start()

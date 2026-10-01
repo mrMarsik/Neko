@@ -11,9 +11,8 @@ const socket = new WebSocketServer({
 })
 
 
-export function startPort(
-  receive: (packet: Packet) => void
-) {
+export function startPort(receive: (packet: Packet) => void) {
+  
   console.log('ws://localhost:2000')
 
 

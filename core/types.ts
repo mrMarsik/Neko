@@ -8,7 +8,7 @@ export type Platform =
 export type TextPacket = {
   id: string
   type: 'text'
-  author: 'user' | 'neko'
+  author: string
   content: string
   timestamp: number
 }

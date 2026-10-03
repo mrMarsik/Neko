@@ -1,6 +1,6 @@
 #!/bin/bash
 
-fuser -k 2000/tcp 2001/tcp 2002/tcp >/dev/null 2>&1 || true
+fuser -k 2000/tcp 2001/tcp 2002/tcp 2003/tcp 2004/tcp >/dev/null 2>&1 || true
 
 concurrently --kill-others --names "NEKO,BRIDGE,WEB,DISCORD,LIVE" \
   "nodemon --watch core --ext ts --exec 'npx tsx core/neko.ts'" \

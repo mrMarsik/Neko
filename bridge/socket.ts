@@ -1,85 +1,84 @@
-import WebSocket, { WebSocketServer } from 'ws'
+import WebSocket from 'ws'
+
+import type { Packet } from '../core/types'
 
 
-let neko: WebSocket
-let web: WebSocket | null = null
-let discord: WebSocket | null = null
-
-let bridge: WebSocketServer
-
-
-function initBridge() {
-  bridge = new WebSocketServer({
-    port: 2001
-  })
-
-  console.log('ws://localhost:2001')
+const addresses = {
+  neko: 'ws://localhost:2000',
+  web: 'ws://localhost:2002',
+  discord: 'ws://localhost:2003'
 }
 
 
-function connectNeko() {
-  neko = new WebSocket('ws://localhost:2000')
-
-  neko.on('open', () => {
-    console.log('→ Neko')
-  })
-
-  neko.on('close', () => {
-    setTimeout(connectNeko, 1000)
-  })
-
-  neko.on('error', () => {
-    neko.close()
-  })
-}
+type PortName = keyof typeof addresses
 
 
-function connectWeb() {
-  web = new WebSocket('ws://localhost:2002')
+const ports: Partial<Record<PortName, WebSocket>> = {}
 
 
-  web.on('open', () => {
-    console.log('→ Web')
+function connect(portName: PortName) {
+  const port = new WebSocket(addresses[portName])
+
+  ports[portName] = port
+
+
+  port.on('open', () => {
+    console.log(`→ ${portName}`)
   })
 
 
-  web.on('close', () => {
-    setTimeout(connectWeb, 1000)
+  port.on('message', message => {
+    const packet: Packet = JSON.parse(message.toString())
+
+    route(portName, packet)
   })
 
 
-  web.on('error', () => {
-    web?.close()
+  port.on('close', () => {
+    if (ports[portName] === port) {
+      delete ports[portName]
+    }
+
+    setTimeout(() => connect(portName), 1000)
+  })
+
+
+  port.on('error', () => {
+    port.close()
   })
 }
 
 
-function connectDiscord() {
-    discord = new WebSocket('ws://localhost:2003')
+function route(from: PortName, packet: Packet) {
+
+  // adapter → Neko
+  if (from !== 'neko') {
+    send('neko', packet)
+
+    return
+  }
 
 
-  discord.on('open', () => {
-    console.log('→ Discord')
-  })
+  // Neko → adapter
+  const platform = packet.address.platform
+
+  send(platform, packet)
+}
 
 
-  discord.on('close', () => {
-    setTimeout(connectDiscord, 1000)
-  })
+function send(portName: PortName, packet: Packet) {
+  const port = ports[portName]
 
+  if (port?.readyState !== WebSocket.OPEN) return
 
-  discord.on('error', () => {
-    discord?.close()
-  })
+  port.send(JSON.stringify(packet))
 }
 
 
 function start() {
-  initBridge()
-
-  connectNeko()
-  connectWeb()
-  connectDiscord()
+  connect('neko')
+  connect('web')
+  connect('discord')
 }
 
 

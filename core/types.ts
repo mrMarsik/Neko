@@ -1,15 +1,10 @@
-export type Platform =
-  | "discord"
-  | "telegram"
-  | "web"
-
-
 
 export type TextPacket = {
   id: string
   type: 'text'
-  author: string
   content: string
+
+  address: Address
   timestamp: number
 }
 
@@ -17,8 +12,9 @@ export type TextPacket = {
 export type AudioPacket = {
   id: string
   type: 'audio'
-  author: 'user' | 'neko'
   audio: string
+  
+  address: Address
   timestamp: number
 }
 
@@ -26,8 +22,9 @@ export type AudioPacket = {
 export type VideoPacket = {
   id: string
   type: 'video'
-  author: 'user' | 'neko'
   video: string
+
+  address: Address
   timestamp: number
 }
 
@@ -37,6 +34,8 @@ export type ToolPacket = {
   type: 'tool'
   tool: string
   data: unknown
+
+  address: Address
   timestamp: number
 }
 
@@ -46,3 +45,25 @@ export type Packet =
   | AudioPacket
   | VideoPacket
   | ToolPacket
+
+
+
+
+export type Account = {
+  id: string
+  addresses: Address[]
+}
+
+
+export type Address = {
+  platform: Platform
+  userId: string
+  channelId?: string | undefined
+  guildId?: string
+}
+
+
+export type Platform =
+  | 'discord'
+  | 'web'
+  | 'neko'

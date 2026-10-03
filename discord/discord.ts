@@ -8,7 +8,7 @@ import {
   GatewayIntentBits
 } from 'discord.js'
 
-import type { Packet, TextPacket } from '../core/types'
+import type { Packet, TextPacket, AudioPacket, ToolPacket, Address } from '../core/types'
 
 
 const discord = new Client({
@@ -34,7 +34,7 @@ function start() {
   socket.on('connection', client => {
     bridge = client
 
-    console.log('→ Bridge')
+    console.log('→ bridge')
 
 
     client.on('message', message => {
@@ -58,14 +58,20 @@ function start() {
     const packet: TextPacket = {
       id: randomUUID(),
       type: 'text',
-      author: message.author.id,
       content: message.content,
+
+      address: {
+        platform: 'discord',
+        userId: message.author.id,
+        channelId: message.channel.id
+      },
+
       timestamp: Date.now()
     }
 
     send(packet)
 
-    console.log(packet)
+    console.log('→', packet)
   })
 
 
@@ -78,14 +84,20 @@ function start() {
 }
 
 
-function receive(packet: Packet) {
+async function receive(packet: Packet) {
   console.log('←', packet)
 
   if (packet.type !== 'text') return
+  if (packet.address.platform !== 'discord') return
+  if (!packet.address.channelId) return
 
-  // тут потім:
-  // Discord отримав текст від Neko
-  // і відправляє його в потрібний канал
+  const channel = await discord.channels.fetch(
+    packet.address.channelId
+  )
+  
+  if (!channel?.isSendable()) return
+  
+  await channel.send(packet.content)
 }
 
 

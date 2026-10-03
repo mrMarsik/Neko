@@ -24,13 +24,16 @@ export default class NekoChat {
       this.send.disabled = false
     })
 
+
     this.socket.addEventListener('message', event => {
       this.addMessage(event.data, 'neko')
     })
 
+
     this.send.addEventListener('click', () => {
       this.sendMessage()
     })
+
 
     this.input.addEventListener('keydown', event => {
       if (event.key === 'Enter') {
@@ -46,14 +49,7 @@ export default class NekoChat {
     if (!text) return
     if (this.socket.readyState !== WebSocket.OPEN) return
 
-    const packet = {
-      id: crypto.randomUUID(),
-      type: 'text',
-      content: text,
-      timestamp: Date.now()
-    }
-
-    this.socket.send(JSON.stringify(packet))
+    this.socket.send(text)
 
     this.addMessage(text, 'user')
     this.input.value = ''
@@ -79,6 +75,6 @@ export default class NekoChat {
 }
 
 
-const socket = new WebSocket('ws://localhost:2002')
+const socket = new WebSocket('ws://localhost:2002/web')
 
 new NekoChat(document, socket)

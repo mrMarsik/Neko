@@ -5,24 +5,24 @@ import type { Packet } from './types'
 
 let bridge: WebSocket | null = null
 
-
 const socket = new WebSocketServer({
   port: 2000
 })
 
 
 export function startPort(receive: (packet: Packet) => void) {
-  
+
   console.log('ws://localhost:2000')
 
 
   socket.on('connection', client => {
     bridge = client
 
-    console.log('→ Bridge')
+    console.log('→ bridge')
 
 
     client.on('message', message => {
+
       const packet: Packet = JSON.parse(message.toString())
 
       receive(packet)
@@ -39,7 +39,7 @@ export function startPort(receive: (packet: Packet) => void) {
 
 
 export function send(packet: Packet) {
-  if (bridge?.readyState !== WebSocket.OPEN) return
 
+  if (bridge?.readyState !== WebSocket.OPEN) return
   bridge.send(JSON.stringify(packet))
 }

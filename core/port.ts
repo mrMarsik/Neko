@@ -1,6 +1,6 @@
 import WebSocket, { WebSocketServer } from 'ws'
 
-import type { Packet } from './types'
+import type { Packet } from '../types'
 
 
 let bridge: WebSocket | null = null

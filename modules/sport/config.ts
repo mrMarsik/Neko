@@ -1,4 +1,4 @@
-import { Platform } from "../../core/types"
+import { Platform } from "../../types"
 
 export const sportConfig: {
   name: string

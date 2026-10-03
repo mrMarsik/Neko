@@ -1,7 +1,6 @@
-import { text } from 'stream/consumers';
 import { startPort, send } from './port'
 
-import type { Packet, TextPacket, AudioPacket, VideoPacket, ToolPacket } from './types'
+import type { Packet, TextPacket, AudioPacket, VideoPacket, ToolPacket } from '../types'
 
 import { randomUUID } from 'crypto'
 

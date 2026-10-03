@@ -1,6 +1,6 @@
 import WebSocket from 'ws'
 
-import type { Packet } from '../core/types'
+import type { Packet } from '../types'
 
 
 const addresses = {

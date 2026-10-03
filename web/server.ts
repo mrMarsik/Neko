@@ -4,7 +4,7 @@ import { randomUUID } from 'crypto'
 import { WebSocketServer, WebSocket } from 'ws'
 import type { Server } from 'http'
 
-import type { Packet, TextPacket } from '../core/types'
+import type { Packet, TextPacket } from '../types'
 
 
 const app = express()

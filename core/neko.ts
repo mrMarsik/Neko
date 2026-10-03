@@ -6,7 +6,7 @@ import { randomUUID } from 'crypto'
 
 
 
-async function receive(bridgePacket: Packet) {
+function receive(bridgePacket: Packet) {
   
   switch (bridgePacket.type) {
     case 'text': 

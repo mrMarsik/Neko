@@ -58,7 +58,7 @@ export type Account = {
 export type Address = {
   platform: Platform
   userId: string
-  channelId?: string | undefined
+  channelId?: string
   guildId?: string
 }
 

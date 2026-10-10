@@ -1,12 +1,14 @@
 import { startPort, sendPort } from './port'
 import { startClient, sendClient } from './client'
+import { playAudio } from './tools/play-audio'
 
 import type {
   Packet,
   TextPacket,
   AudioPacket,
   VideoPacket,
-  ToolPacket
+  ToolPacket,
+  Address,
 } from '../types'
 
 
@@ -48,7 +50,7 @@ function handleText(bridgePacket: TextPacket) {
 
 
 function handleAudio(bridgePacket: AudioPacket) {
-
+  playAudio(bridgePacket.address, bridgePacket.filePath)
 }
 
 

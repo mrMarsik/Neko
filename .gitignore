@@ -1,3 +1,7 @@
 node_modules/
 .env
+
 secret/
+
+storage/database/storage.db
+storage/files

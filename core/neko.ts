@@ -1,28 +1,85 @@
+import { randomUUID } from 'crypto'
+
 import { startPort, send } from './port'
+import { startDarkPort, sendDark } from './dark-port'
+
+
+import { getTask, createTask, updateTask } from './tasks/tasks'
+
+import { tools } from './tools/n'
 
 import type { Packet, TextPacket, AudioPacket, VideoPacket, ToolPacket } from '../types'
 
-import { randomUUID } from 'crypto'
 
-
-
-function receive(bridgePacket: Packet) {
+function receive(clientPacket: Packet) {
   
-  switch (bridgePacket.type) {
+  switch (clientPacket.type) {
     case 'text': 
-      handleText(bridgePacket)
+      handText(clientPacket)
       break;
       
     case 'audio': 
-      handleAudio(bridgePacket)
+      handAudio(clientPacket)
       break;
 
     case 'video': 
-      handleVideo(bridgePacket)
+      handVideo(clientPacket)
       break;
 
     case 'tool': 
-      handleTool(bridgePacket)
+      handTool(clientPacket)
+      break;
+
+    default:
+
+      break;
+  }
+}
+function handText(clientPacket: TextPacket) {
+
+  console.log(clientPacket.content)
+
+  const newTask = createTask(clientPacket)
+  
+  console.log(newTask)
+
+}
+
+
+function handAudio(bridgePacket: AudioPacket) {
+  console.log(bridgePacket)  
+}
+
+
+function handVideo(bridgePacket: VideoPacket) {
+  console.log(bridgePacket)  
+}
+
+
+function handTool(bridgePacket: ToolPacket) {
+  console.log(bridgePacket)
+}
+
+
+
+
+function darkReceive(bridgePacket: Packet) {
+  
+  switch (bridgePacket.type) {
+    case 'text': 
+      darkHandText(bridgePacket)
+      break;
+      
+    case 'audio': 
+      darkHandAudio(bridgePacket)
+      break;
+
+    case 'video': 
+      darkHandVideo(bridgePacket)
+      break;
+
+    case 'tool': 
+      darkHandTool(bridgePacket)
       break;
 
     default:
@@ -31,55 +88,29 @@ function receive(bridgePacket: Packet) {
   }
 }
 
+function darkHandText(bridgePacket: TextPacket) {
+  console.log('dark')
 
-function handleText(bridgePacket: TextPacket) {
-  const nekoPacket: TextPacket = 
-    {
-      id: randomUUID(),
-      type: 'text',
-      address: bridgePacket.address,
-      content: 'zalupa',
-      timestamp: Date.now()
-    }
-
-
-  send(nekoPacket)   
+  console.log(bridgePacket.content)
+  console.log(getTask(bridgePacket.taskId))
+  
 }
 
 
-function handleAudio(bridgePacket: AudioPacket) {
-  const nekoPacket: TextPacket = 
-    {
-      id: randomUUID(),
-      type: 'text',
-      address: bridgePacket.address,
-      content: 'zalupa',
-      timestamp: Date.now()
-    }
-
-
-  send(nekoPacket)   
+function darkHandAudio(bridgePacket: AudioPacket) {
+  console.log(bridgePacket)  
 }
 
 
-function handleVideo(bridgePacket: VideoPacket) {
-  const nekoPacket: TextPacket = 
-    {
-      id: randomUUID(),
-      type: 'text',
-      address: bridgePacket.address,
-      content: 'zalupa',
-      timestamp: Date.now()
-    }
-
-
-  send(nekoPacket)   
+function darkHandVideo(bridgePacket: VideoPacket) {
+  console.log(bridgePacket)  
 }
 
 
-function handleTool(bridgePacket: ToolPacket) {
+function darkHandTool(bridgePacket: ToolPacket) {
   console.log(bridgePacket)
 }
 
 
 startPort(receive)
+startDarkPort(darkReceive)

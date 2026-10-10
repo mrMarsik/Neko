@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS media (
+  id TEXT PRIMARY KEY,
+  type TEXT NOT NULL,
+  name TEXT NOT NULL,
+  path TEXT NOT NULL,
+  source TEXT NOT NULL
+);

@@ -6,7 +6,8 @@ import type { Packet } from '../types'
 const addresses = {
   neko: 'ws://localhost:2000',
   web: 'ws://localhost:2002',
-  discord: 'ws://localhost:2003'
+  discord: 'ws://localhost:2003',
+  lumen: 'ws://localhost:2004',
 }
 
 
@@ -49,6 +50,11 @@ function connect(portName: PortName) {
 }
 
 
+function isPortName(value: string): value is PortName {
+  return value in addresses
+}
+
+
 function route(from: PortName, packet: Packet) {
 
   // adapter → Neko
@@ -58,11 +64,13 @@ function route(from: PortName, packet: Packet) {
     return
   }
 
-
   // Neko → adapter
-  const platform = packet.address.platform
-
-  send(platform, packet)
+  const platform = packet.to
+  
+  if (isPortName(platform)) {
+    send(platform, packet)
+  }
+  // send(platform, packet)
 }
 
 
@@ -79,6 +87,7 @@ function start() {
   connect('neko')
   connect('web')
   connect('discord')
+  connect('lumen')
 }
 
 

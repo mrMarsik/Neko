@@ -3,5 +3,5 @@ node_modules/
 
 secret/
 
-storage/database/storage.db
+lumen-db/database/lumen.db
 storage/files

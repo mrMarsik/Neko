@@ -58,7 +58,7 @@ export function saveMedia(
   const id = randomUUID()
 
   const relativePath = path.join(
-    'lumen/media/files',
+    'lumen-db/media/files',
     id
   )
 

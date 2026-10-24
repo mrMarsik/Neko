@@ -35,12 +35,16 @@ function receive(clientPacket: Packet) {
       break;
   }
 }
+
+
 function handText(clientPacket: TextPacket) {
 
   console.log(clientPacket.content)
 
+  
   const newTask = createTask(clientPacket)
   
+
   console.log(newTask)
 
 }

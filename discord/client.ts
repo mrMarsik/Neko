@@ -7,11 +7,7 @@ import {
   GatewayIntentBits
 } from 'discord.js'
 
-import type {
-  Packet,
-  TextPacket
-} from '../types'
-
+import type * as T from '../types'
 
 export const client = new Client({
   intents: [
@@ -23,20 +19,25 @@ export const client = new Client({
 })
 
 
-export function startClient(receive: (packet: Packet) => void) {
+export function startClient(receive: (packet: T.Packet) => void) {
   client.on(Events.MessageCreate, message => {
+    
+    console.log(Date.now())
     if (message.author.bot) return
 
-    const packet: TextPacket = {
-      id: randomUUID(),
-      type: 'text',
+    console.log(message.content)
+
+    const packet: T.MessagePacket = {
+      type: 'message',
+
       content: message.content,
 
-      address: {
+      to: 'neko',
+
+      context: {
         platform: 'discord',
-        userId: message.author.id,
         channelId: message.channel.id,
-        guildId: message.guildId ?? undefined
+        userId: message.author.id
       },
 
       timestamp: Date.now()
@@ -55,13 +56,13 @@ export function startClient(receive: (packet: Packet) => void) {
 }
 
 
-export async function sendClient(packet: TextPacket) {
+export async function sendClient(packet: T.MessagePacket) {
 
 
-  if (!packet.address.channelId) return
+  if (!packet.context.channelId) return
 
   const channel = await client.channels.fetch(
-    packet.address.channelId
+    packet.context.channelId
   )
 
 

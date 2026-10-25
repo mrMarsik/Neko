@@ -1,14 +1,8 @@
 import WebSocket from 'ws'
 
-import type { Packet } from '../types'
+import type * as T from '../types'
 
 
-const addresses = {
-  neko: 'ws://localhost:2000',
-  web: 'ws://localhost:2002',
-  discord: 'ws://localhost:2003',
-  lumen: 'ws://localhost:2004',
-}
 
 
 type PortName = keyof typeof addresses
@@ -19,7 +13,8 @@ const ports: Partial<Record<PortName, WebSocket>> = {}
 
 function connect(portName: PortName) {
   const port = new WebSocket(addresses[portName])
-
+  
+  
   ports[portName] = port
 
 
@@ -50,19 +45,22 @@ function connect(portName: PortName) {
 }
 
 
+const addresses = {
+    neko: 'ws://localhost:2000',
+    web: 'ws://localhost:2002',
+    discord: 'ws://localhost:2003',
+    lumen: 'ws://localhost:2004',
+}
+
+
 function isPortName(value: string): value is PortName {
   return value in addresses
 }
 
 
-function route(from: PortName, packet: Packet) {
+function route(from: PortName, packet: T.Packet) {
+  console.log(packet.content)
 
-  // adapter → Neko
-  if (from !== 'neko') {
-    send('neko', packet)
-
-    return
-  }
 
   // Neko → adapter
   const platform = packet.to
@@ -74,7 +72,7 @@ function route(from: PortName, packet: Packet) {
 }
 
 
-function send(portName: PortName, packet: Packet) {
+function send(portName: PortName, packet: T.Packet) {
   const port = ports[portName]
 
   if (port?.readyState !== WebSocket.OPEN) return

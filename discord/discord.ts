@@ -2,14 +2,7 @@ import { startPort, sendPort } from './port'
 import { startClient, sendClient } from './client'
 import { playAudio } from './tools/play-audio'
 
-import type {
-  Packet,
-  TextPacket,
-  AudioPacket,
-  VideoPacket,
-  ToolPacket,
-  Address,
-} from '../types'
+import type * as T from '../types'
 
 
 function start() {
@@ -18,24 +11,25 @@ function start() {
 }
 
 
-function clientReceive(clientPacket: Packet) {
+function clientReceive(clientPacket: T.Packet) {
+  
   sendPort(clientPacket)
 }
 
 
-function portReceive(bridgePacket: Packet) {
+function portReceive(bridgePacket: T.Packet) {
   switch (bridgePacket.type) {
-    case 'text':
-      handleText(bridgePacket)
+    case 'message':
+      handleMessage(bridgePacket)
       break
 
-    case 'audio':
-      handleAudio(bridgePacket)
+    case 'voice':
+      handleVoice(bridgePacket)
       break
 
-    case 'video':
-      handleVideo(bridgePacket)
-      break
+    // case 'video':
+    //   handleVideo(bridgePacket)
+    //   break
 
     case 'tool':
       handleTool(bridgePacket)
@@ -44,22 +38,19 @@ function portReceive(bridgePacket: Packet) {
 }
 
 
-function handleText(bridgePacket: TextPacket) {
+function handleMessage(bridgePacket: T.MessagePacket) {
   sendClient(bridgePacket)
+  console.log(bridgePacket.content)
 }
 
 
-function handleAudio(bridgePacket: AudioPacket) {
-  playAudio(bridgePacket.address, bridgePacket.filePath)
+function handleVoice(bridgePacket: T.VoicePacket) {
+  
 }
 
 
-function handleVideo(bridgePacket: VideoPacket) {
 
-}
-
-
-function handleTool(bridgePacket: ToolPacket) {
+function handleTool(bridgePacket: T.ToolPacket) {
 
 }
 

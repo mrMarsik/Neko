@@ -2,7 +2,7 @@
 
 fuser -k 2000/tcp 2001/tcp 2002/tcp 2003/tcp 2004/tcp 6660/tcp 6661/tcp 6662/tcp>/dev/null 2>&1 || true
 
-concurrently --kill-others --names "NEKO,BRIDGE,WEB,DISCORD,DARK_BRIDGE,FINDER,LUMEN" \
+concurrently --kill-others --names "   NEKO   ,  BRIDGE  ,    WEB   ,  DISCORD ,DARK BRIDG,  FINDER  ,   LUMEN  " \
   "nodemon --watch core --ext ts --exec 'npx tsx core/neko.ts'" \
   "nodemon --watch bridge --ext ts --exec 'npx tsx bridge/bridge.ts'" \
   "nodemon --watch web --ext ts --exec 'npx tsx web/server.ts'" \

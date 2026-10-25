@@ -1,126 +1,62 @@
-export type Platform =
-  | 'discord'
-  | 'web'
+
+type Platform = 'discord' | 'web'
+
+type Service = 'neko' | 'finder' | 'lumen'
 
 
-export type Service =
-  | 'neko'
-  | 'finder'
-  | 'lumen'
-
-
-export type ClientContext = {
-  id: string
-
-  platform: Platform
-
-  userId: string
-  channelId: string
-  guildId?: string
-}
-
-
-export type TextPacket = {
-  id: string
-  type: 'text'
-
-  from: Service | Platform
-  to: Service | Platform
-
-  taskId: string
+type MessagePacket = {
+  type: 'message'
 
   content: string
 
-  timestamp: number
-}
+  to: Platform | 'neko'
 
-
-export type AudioPacket = {
-  id: string
-  type: 'audio'
-
-  from: Service
-  to: Service
-
-  taskId: string
-
-  mediaId: string
+  context: {
+    platform: Platform
+    channelId: string
+    userId?: string
+  }
 
   timestamp: number
 }
 
 
-export type VideoPacket = {
-  id: string
-  type: 'video'
+type VoicePacket = {
+  type: 'voice'
 
-  from: Service
-  to: Service
+  link: string
 
-  taskId: string
-
-  mediaId: string
-
-  timestamp: number
-}
-
-
-export type ToolAction =
-  | 'call'
-  | 'result'
-  | 'error'
-
-
-export type ToolPacket = {
-  id: string
-  type: 'tool'
-
-  from: Service
-  to: Service
-
-  tool: string
-  action: ToolAction
   
-  data: Record<string, unknown>
+  to: Platform
 
-  taskId: string
-  replyTo?: string
+  context: {
+    channelId: string
+    userId?: string
+  }
 
   timestamp: number
 }
 
 
-export type Packet =
-  | TextPacket
-  | AudioPacket
-  | VideoPacket
+type ToolPacket = {
+  type: 'tool'
+  to: Platform
+
+  timestamp: number
+}
+
+
+type Packet =
+  | MessagePacket
+  | VoicePacket
   | ToolPacket
 
 
-
-
-  export type TaskStatus =
-  | 'pending'
-  | 'running'
-  | 'done'
-  | 'error'
-
-
-export type ClientPacket =
-  | TextPacket
-  | AudioPacket
-  | VideoPacket
-
-
-export type Task = {
-  id: string
-
-  status: TaskStatus
-
-  packet: ClientPacket
-
-  data: Record<string, unknown>
-
-  createdAt: number
-  updatedAt: number
+export type {
+  Platform,
+  Service,
+  MessagePacket,
+  VoicePacket,
+  ToolPacket,
+  Packet
 }

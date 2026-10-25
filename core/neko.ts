@@ -7,28 +7,22 @@ import { startDarkPort, sendDark } from './dark-port'
 import { getTask, createTask, updateTask } from './tasks/tasks'
 
 import { tools } from './tools/n'
+import type * as T from '../types'
 
-import type { Packet, TextPacket, AudioPacket, VideoPacket, ToolPacket } from '../types'
 
 
-function receive(clientPacket: Packet) {
+function receive(clientPacket: T.Packet) {
   
   switch (clientPacket.type) {
-    case 'text': 
-      handText(clientPacket)
+    case 'message': 
+      handMessage(clientPacket)
       break;
+
       
-    case 'audio': 
-      handAudio(clientPacket)
+    case 'voice': 
+      handVoice(clientPacket)
       break;
 
-    case 'video': 
-      handVideo(clientPacket)
-      break;
-
-    case 'tool': 
-      handTool(clientPacket)
-      break;
 
     default:
 
@@ -37,50 +31,41 @@ function receive(clientPacket: Packet) {
 }
 
 
-function handText(clientPacket: TextPacket) {
+function handMessage(clientPacket: T.MessagePacket) {
 
   console.log(clientPacket.content)
 
   
   const newTask = createTask(clientPacket)
   
+  const newPacket = clientPacket
+  clientPacket.to = 'discord'
+  newPacket.content = 'zalupa'
 
-  console.log(newTask)
+  send(newPacket)
 
 }
 
 
-function handAudio(bridgePacket: AudioPacket) {
+function handVoice(bridgePacket: T.VoicePacket) {
   console.log(bridgePacket)  
 }
 
 
-function handVideo(bridgePacket: VideoPacket) {
-  console.log(bridgePacket)  
-}
-
-
-function handTool(bridgePacket: ToolPacket) {
-  console.log(bridgePacket)
-}
 
 
 
-
-function darkReceive(bridgePacket: Packet) {
+function darkReceive(bridgePacket: T.Packet) {
   
   switch (bridgePacket.type) {
-    case 'text': 
-      darkHandText(bridgePacket)
+    case 'message': 
+      darkHandMessage(bridgePacket)
       break;
       
-    case 'audio': 
-      darkHandAudio(bridgePacket)
+    case 'voice': 
+      darkHandVoice(bridgePacket)
       break;
 
-    case 'video': 
-      darkHandVideo(bridgePacket)
-      break;
 
     case 'tool': 
       darkHandTool(bridgePacket)
@@ -92,26 +77,21 @@ function darkReceive(bridgePacket: Packet) {
   }
 }
 
-function darkHandText(bridgePacket: TextPacket) {
-  console.log('dark')
+function darkHandMessage(bridgePacket: T.MessagePacket) {
 
-  console.log(bridgePacket.content)
-  console.log(getTask(bridgePacket.taskId))
+
+  console.log('dark ' + bridgePacket.content)
+
   
 }
 
 
-function darkHandAudio(bridgePacket: AudioPacket) {
+function darkHandVoice(bridgePacket: T.VoicePacket) {
   console.log(bridgePacket)  
 }
 
 
-function darkHandVideo(bridgePacket: VideoPacket) {
-  console.log(bridgePacket)  
-}
-
-
-function darkHandTool(bridgePacket: ToolPacket) {
+function darkHandTool(bridgePacket: T.ToolPacket) {
   console.log(bridgePacket)
 }
 

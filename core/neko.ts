@@ -18,11 +18,13 @@ function receive(clientPacket: T.Packet) {
       handMessage(clientPacket)
       break;
 
-      
     case 'voice': 
       handVoice(clientPacket)
       break;
 
+    case 'result':
+      darkHandResult(clientPacket)
+      break
 
     default:
 
@@ -33,17 +35,46 @@ function receive(clientPacket: T.Packet) {
 
 function handMessage(clientPacket: T.MessagePacket) {
 
-  console.log(clientPacket.content)
+  if (!clientPacket.content) return
 
-  
-  const newTask = createTask(clientPacket)
-  
-  const newPacket = clientPacket
-  clientPacket.to = 'discord'
-  newPacket.content = 'zalupa'
+  // console.log(clientPacket)s
 
-  send(newPacket)
 
+  const newTask = createTask(clientPacket.context)
+  console.log(newTask)
+  const newPacket = {...clientPacket}
+  newPacket.to = 'discord'
+
+  switch (newPacket.context.userId) {
+    
+    default:
+      newPacket.content = 'не круто'
+      break
+
+    case '547749407957712896':
+      newPacket.content = 'круто'
+        
+  }
+
+
+  // send(newPacket)
+
+
+
+  const toolPacket : T.ToolPacket = {
+    taskId: '1',
+
+    type: 'tool',
+
+    to: 'finder',
+    tool: 'find-audio',
+    data: {query : clientPacket.content},
+
+    timestamp: Date.now()
+
+  } 
+
+  sendDark(toolPacket)
 }
 
 
@@ -71,6 +102,12 @@ function darkReceive(bridgePacket: T.Packet) {
       darkHandTool(bridgePacket)
       break;
 
+
+     case 'result': 
+      darkHandResult(bridgePacket)
+      break;
+
+
     default:
 
       break;
@@ -93,6 +130,12 @@ function darkHandVoice(bridgePacket: T.VoicePacket) {
 
 function darkHandTool(bridgePacket: T.ToolPacket) {
   console.log(bridgePacket)
+  
+}
+
+
+function darkHandResult(bridgePacket: T.ResultPacket) {
+  console.log("RESULT")
 }
 
 

@@ -22,10 +22,8 @@ export const client = new Client({
 export function startClient(receive: (packet: T.Packet) => void) {
   client.on(Events.MessageCreate, message => {
     
-    console.log(Date.now())
     if (message.author.bot) return
 
-    console.log(message.content)
 
     const packet: T.MessagePacket = {
       type: 'message',

@@ -35,8 +35,7 @@ async function receive(packet: Packet) {
 
 async function darkReceive(packet: Packet) {
   if (packet.type !== 'tool') return
-  if (packet.action !== 'call') return
-
+  
   switch (packet.tool) {
     case 'saveMedia':
       await handleSaveMedia(packet)
@@ -52,14 +51,12 @@ async function handleSaveMedia(packet: ToolPacket) {
 
 
   const downloaded = await download(url)
-
   if (!downloaded) return
 
 
   const inspection = await inspect(downloaded.path)
-
   if (!inspection.safe) {
-    console.log('[LUMEN] rejected:', downloaded.path)
+    console.log('rejected:', downloaded.path)
     return
   }
 

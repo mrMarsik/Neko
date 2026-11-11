@@ -20,7 +20,6 @@ export function startPort(receive: (packet: Packet) => void) {
 
     console.log('→ bridge')
 
-
     client.on('message', message => {
 
       const packet: Packet = JSON.parse(message.toString())

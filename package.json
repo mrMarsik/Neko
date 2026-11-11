@@ -14,7 +14,9 @@
     "@types/ws": "^8.18.1",
     "browser-sync": "^3.0.4",
     "concurrently": "^9.2.4",
+    "nodemon": "^3.1.14",
     "ts-node": "^10.9.2",
+    "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   },
   "dependencies": {
@@ -28,6 +30,7 @@
     "libsodium-wrappers": "^0.8.4",
     "play-dl": "^1.9.7",
     "playwright": "^1.61.1",
-    "ws": "^8.21.3"
+    "ws": "^8.21.3",
+    "youtubei.js": "^18.3.0"
   }
 }

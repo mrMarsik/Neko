@@ -1,18 +1,19 @@
+
 #!/bin/bash
 
-fuser -k 2000/tcp 2001/tcp 2002/tcp 2003/tcp 2004/tcp 6660/tcp 6661/tcp 6662/tcp>/dev/null 2>&1 || true
+for port in 2000 2002 2003 2004 6660 6661 6662 7000; do
+  fuser -k "$port/tcp" >/dev/null 2>&1 || true
+done
 
-concurrently --kill-others --names "   NEKO   ,  BRIDGE  ,    WEB   ,  DISCORD ,DARK BRIDG,  FINDER  ,   LUMEN  " \
-  "nodemon --watch core --ext ts --exec 'npx tsx core/neko.ts'" \
-  "nodemon --watch bridge --ext ts --exec 'npx tsx bridge/bridge.ts'" \
-  "nodemon --watch web --ext ts --exec 'npx tsx web/server.ts'" \
-  "nodemon --watch discord --ext ts --exec 'npx tsx discord/discord.ts'" \
-  "nodemon --watch dark-bridge --ext ts --exec 'npx tsx dark-bridge/dark-bridge.ts'" \
-  "nodemon --watch finder --ext ts --exec 'npx tsx finder/finder.ts'" \
-  "nodemon --watch finder --ext ts --exec 'npx tsx lumen-db/lumen-db.ts'" \
-  "browser-sync start ..."
-    --proxy http://localhost:2002 \
-    --files 'neko' \
-    --no-inject-changes \
-    --no-open \
-    --no-notify"
+sleep 0.5
+
+concurrently --kill-others \
+  --names "   NEKO   ,  BRIDGE  ,   WEB    , DISCORD  ,DARKBRIDGE,  FINDER  ,  LUMEN   , BROWSER  " \
+  "nodemon --signal SIGTERM --watch core --ext ts --exec 'node --import tsx' core/neko.ts" \
+  "nodemon --signal SIGTERM --watch bridge --ext ts --exec 'node --import tsx' bridge/bridge.ts" \
+  "nodemon --signal SIGTERM --watch web --ext ts --exec 'node --import tsx' web/server.ts" \
+  "nodemon --signal SIGTERM --watch discord --ext ts --exec 'node --import tsx' discord/discord.ts" \
+  "nodemon --signal SIGTERM --watch dark-bridge --ext ts --exec 'node --import tsx' dark-bridge/dark-bridge.ts" \
+  "nodemon --signal SIGTERM --watch finder --ext ts --exec 'node --import tsx' finder/finder.ts" \
+  "nodemon --signal SIGTERM --watch lumen-db --ext ts --exec 'node --import tsx' lumen-db/lumen-db.ts" \
+  "browser-sync start --proxy http://localhost:2002 --files 'web/**/*' --no-inject-changes --no-open --no-notify"

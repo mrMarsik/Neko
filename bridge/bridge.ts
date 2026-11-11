@@ -3,6 +3,12 @@ import WebSocket from 'ws'
 import type * as T from '../types'
 
 
+const addresses = {
+  neko: 'ws://localhost:2000',
+  web: 'ws://localhost:2002',
+  discord: 'ws://localhost:2003',
+  lumen: 'ws://localhost:2004',
+}
 
 
 type PortName = keyof typeof addresses
@@ -24,7 +30,7 @@ function connect(portName: PortName) {
 
 
   port.on('message', message => {
-    const packet: Packet = JSON.parse(message.toString())
+    const packet: T.Packet = JSON.parse(message.toString())
 
     route(portName, packet)
   })
@@ -45,12 +51,6 @@ function connect(portName: PortName) {
 }
 
 
-const addresses = {
-    neko: 'ws://localhost:2000',
-    web: 'ws://localhost:2002',
-    discord: 'ws://localhost:2003',
-    lumen: 'ws://localhost:2004',
-}
 
 
 function isPortName(value: string): value is PortName {
@@ -59,7 +59,7 @@ function isPortName(value: string): value is PortName {
 
 
 function route(from: PortName, packet: T.Packet) {
-  console.log(packet.content)
+  console.log(' ▼ ')
 
 
   // Neko → adapter

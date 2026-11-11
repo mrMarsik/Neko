@@ -1,6 +1,6 @@
 import { startPort, send } from './port'
 
-import type { Packet, TextPacket, AudioPacket, VideoPacket, ToolPacket } from '../types'
+import type { Packet, ToolPacket, ResultPacket } from '../types'
 
 import { randomUUID } from 'crypto'
 
@@ -9,18 +9,7 @@ import { tools } from './tools/n'
 function receive(bridgePacket: Packet) {
   
   switch (bridgePacket.type) {
-    case 'text': 
-      handleText(bridgePacket)
-      break;
-      
-    case 'audio': 
-      handleAudio(bridgePacket)
-      break;
-
-    case 'video': 
-      handleVideo(bridgePacket)
-      break;
-
+  
     case 'tool': 
       handleTool(bridgePacket)
       break;
@@ -32,23 +21,10 @@ function receive(bridgePacket: Packet) {
 }
 
 
-async function handleText(bridgePacket: TextPacket) {
-
-}
-
-
-function handleAudio(bridgePacket: AudioPacket) {
-  console.log('AUDIO')
-}
-
-
-function handleVideo(bridgePacket: VideoPacket) {
-  console.log('VIDEO') 
-}
-
 
 async function handleTool(bridgePacket: ToolPacket) {
-  console.log('TOOL')
+  console.log(bridgePacket.tool + ': ' + bridgePacket.data.query)
+
 
   const query = bridgePacket.data.query
 
@@ -58,25 +34,23 @@ async function handleTool(bridgePacket: ToolPacket) {
 
   if (!url) return
 
+  console.log(url)
+  
 
+  const resultPacket: ResultPacket = {
+    type: 'result',
 
+    to: 'neko',
 
-  const finderPacket: TextPacket = {
-  id: randomUUID(),
-  type: 'text',
+    taskId: bridgePacket.taskId,
 
-  from: 'finder',
-  to: 'neko',
+    success: true,
+    data: { url: url },
 
-  taskId: bridgePacket.taskId,
+    timestamp: Date.now()
+  }
 
-  content: url,
-
-  timestamp: Date.now()
-}
-
-
-  send(finderPacket)
+  send(resultPacket)
 }
 
 

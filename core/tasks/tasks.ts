@@ -1,30 +1,31 @@
 import { randomUUID } from 'crypto'
 
-import type {
-  ClientPacket,
-  Task
-} from '../../types'
+import type * as T from '../../types'
 
 
 
-const tasks = new Map<string, Task>()
+const tasks = new Map<string, T.Task>()
 
 
 export function createTask(
-  packet: ClientPacket
+  context: T.ClientContext,
+  // data: Record<string, unknown>,
+
 ) {
-  const task: Task = {
-    id: randomUUID(),
+  const task: T.Task = {
+  id: 'task-001',
+  status: 'pending',
 
-    status: 'running',
+  context: context,
 
-    packet,
+  data: {
+    query: 'назва пісні'
+  },
 
-    data: {},
+  steps: [],
 
-    createdAt: Date.now(),
-    updatedAt: Date.now()
-  }
+  updated: []
+}
 
 
   tasks.set(task.id, task)
@@ -37,21 +38,15 @@ export function getTask(id: string) {
 }
 
 
-export function updateTask(
-  id: string,
-  data: Record<string, unknown>
-) {
-  const task = tasks.get(id)
+export function updateTask(resultPacket: T.ResultPacket) {
+  const task = tasks.get(resultPacket.taskId)
 
   if (!task) return
 
+  if (!resultPacket.success) return
+  
 
-  task.data = {
-    ...task.data,
-    ...data
-  }
-
-  task.updatedAt = Date.now()
+  task.updated.push(Date.now())
 
   return task
 }

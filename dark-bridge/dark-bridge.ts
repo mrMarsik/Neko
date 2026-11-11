@@ -1,6 +1,6 @@
 import WebSocket from 'ws'
 
-import type { Packet, ToolPacket } from '../types'
+import type * as T from '../types'
 
 
 const addresses = {
@@ -28,7 +28,7 @@ function connect(portName: PortName) {
 
 
   port.on('message', message => {
-    const packet: Packet = JSON.parse(message.toString())
+    const packet: T.Packet = JSON.parse(message.toString())
 
     route(portName, packet)
   })
@@ -54,14 +54,18 @@ function isPortName(value: string): value is PortName {
 }
 
 
-function route(from: PortName, packet: Packet) {
+function route(from: PortName, packet: T.Packet) {
 
-  if (packet.type === 'text') {
+  if (packet.type === 'message') {
     console.log(packet.content)
   }
 
   if (packet.type === 'tool') {
     console.log(packet.tool)
+  }
+
+  if (packet.type === 'result') {
+    console.log('▼')
   }
 
   const platform = packet.to
@@ -80,7 +84,7 @@ function route(from: PortName, packet: Packet) {
 }
 
 
-function send(portName: PortName, packet: Packet) {
+function send(portName: PortName, packet: T.Packet) {
   const port = ports[portName]
 
   if (port?.readyState !== WebSocket.OPEN) return

@@ -40,7 +40,27 @@ type VoicePacket = {
 
 type ToolPacket = {
   type: 'tool'
-  to: Platform
+
+  to: Platform | Service
+
+  tool: string
+  data: Record<string, unknown>
+
+  taskId: string
+
+  timestamp: number
+}
+
+
+type ResultPacket = {
+  type: 'result'
+
+  to: Platform | Service
+
+  taskId: string
+
+  success: boolean
+  data: Record<string, unknown>
 
   timestamp: number
 }
@@ -50,7 +70,47 @@ type Packet =
   | MessagePacket
   | VoicePacket
   | ToolPacket
+  | ResultPacket
 
+
+type Task = {
+  id: string
+  status: 'pending' | 'running' | 'done' | 'error'
+  context: ClientContext
+  data: Record<string, unknown>
+  steps: Step[]
+  updated: number[]
+}
+
+type Step = {
+  id: string
+  to: string
+  tool: string
+  input: Record<string, unknown>
+  dependsOn: string[]
+  status: 'pending' | 'running' | 'done' | 'error'
+  result?: Record<string, unknown>
+}
+
+
+export type ClientContext = {
+  platform: 'discord' | 'web'
+  userId?: string
+  channelId: string
+  voiceChannelId?: string
+}
+
+
+type Command = {
+  name: string
+  steps: {
+    id: string
+    to: string
+    tool: string
+    input: Record<string, unknown>
+    dependsOn: string[]
+  }[]
+}
 
 export type {
   Platform,
@@ -58,5 +118,9 @@ export type {
   MessagePacket,
   VoicePacket,
   ToolPacket,
-  Packet
+  ResultPacket,
+  Packet,
+  Step,
+  Task,
+  Command,
 }

@@ -4,10 +4,11 @@ import { startPort, send } from './port'
 import { startDarkPort, sendDark } from './dark-port'
 
 
-import { getTask, createTask, updateTask } from './tasks/tasks'
+import { getTask, createTask, updateTask, runTask } from './tasks/tasks'
 
-import { tools } from './tools/n'
+import { commands } from './commands'
 import type * as T from '../types'
+import { client } from '../discord/client'
 
 
 
@@ -38,43 +39,50 @@ function handMessage(clientPacket: T.MessagePacket) {
   if (!clientPacket.content) return
 
   // console.log(clientPacket)s
+  const command = commands.playMusic
 
-
-  const newTask = createTask(clientPacket.context)
-  console.log(newTask)
-  const newPacket = {...clientPacket}
-  newPacket.to = 'discord'
-
-  switch (newPacket.context.userId) {
-    
-    default:
-      newPacket.content = 'не круто'
-      break
-
-    case '547749407957712896':
-      newPacket.content = 'круто'
-        
+  const data = {
+    query: clientPacket.content,
   }
+
+  const newTask = createTask(command, data, clientPacket.context)
+  console.log(newTask)
+
+  runTask(newTask.id)
+
+  // const newPacket = {...clientPacket}
+  // newPacket.to = 'discord'
+
+  // switch (newPacket.context.userId) {
+    
+  //   default:
+  //     newPacket.content = 'не круто'
+  //     break
+
+  //   case '547749407957712896':
+  //     newPacket.content = 'круто'
+        
+  // }
 
 
   // send(newPacket)
 
 
 
-  const toolPacket : T.ToolPacket = {
-    taskId: '1',
+  // const toolPacket : T.ToolPacket = {
+  //   taskId: '1',
 
-    type: 'tool',
+  //   type: 'tool',
 
-    to: 'finder',
-    tool: 'find-audio',
-    data: {query : clientPacket.content},
+  //   to: 'finder',
+  //   tool: 'find-audio',
+  //   data: {query : clientPacket.content},
 
-    timestamp: Date.now()
+  //   timestamp: Date.now()
 
-  } 
+  // } 
 
-  sendDark(toolPacket)
+  // sendDark(toolPacket)
 }
 
 
@@ -135,7 +143,7 @@ function darkHandTool(bridgePacket: T.ToolPacket) {
 
 
 function darkHandResult(bridgePacket: T.ResultPacket) {
-  console.log("RESULT")
+  updateTask(bridgePacket)
 }
 
 

@@ -8,33 +8,39 @@ const playMusic: Command = {
       id: 'find',
       to: 'finder',
       tool: 'findAudio',
-      input: { query: '$data.query' },
-      dependsOn: []
-    },
+      input: { query: 'data.query' },
+      output: 'url',
+      status: 'pending'
+    }, 
     {
       id: 'save',
       to: 'lumen',
       tool: 'saveMedia',
-      input: { url: '$find.url' },
-      dependsOn: ['find']
+      input: { url: 'data.url' }, 
+      output: 'mediaUrl',
+      status: 'pending'
     },
-    {
-      id: 'join',
-      to: 'discord',
-      tool: 'joinVoice',
-      input: { channelId: '$context.voiceChannelId' },
-      dependsOn: []
-    },
+    // {
+    //   id: 'join',
+    //   to: 'discord',
+    //   tool: 'joinVoice',
+    //   input: { channelId: 'context.voiceChannelId' },
+    //   status: 'pending'
+    // },
     {
       id: 'play',
       to: 'discord',
       tool: 'playAudio',
-      input: { mediaId: '$save.mediaId' },
-      dependsOn: ['save', 'join']
+      input: {  
+        mediaUrl: 'data.mediaUrl',  
+        context: 'context'
+      },
+      status: 'pending'
     }
   ]
 }
 
+// TODO output
 
 export const commands = {
   playMusic: playMusic

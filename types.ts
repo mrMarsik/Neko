@@ -45,8 +45,10 @@ type ToolPacket = {
 
   tool: string
   data: Record<string, unknown>
+  context?: ClientContext
 
   taskId: string
+  stepId: string
 
   timestamp: number
 }
@@ -58,6 +60,7 @@ type ResultPacket = {
   to: Platform | Service
 
   taskId: string
+  stepId: string
 
   success: boolean
   data: Record<string, unknown>
@@ -84,12 +87,12 @@ type Task = {
 
 type Step = {
   id: string
-  to: string
+  to: Platform | Service
   tool: string
-  input: Record<string, unknown>
-  dependsOn: string[]
+  input: Record<string, string>
+  output?:  string
+
   status: 'pending' | 'running' | 'done' | 'error'
-  result?: Record<string, unknown>
 }
 
 
@@ -103,13 +106,7 @@ export type ClientContext = {
 
 type Command = {
   name: string
-  steps: {
-    id: string
-    to: string
-    tool: string
-    input: Record<string, unknown>
-    dependsOn: string[]
-  }[]
+  steps: Step[]
 }
 
 export type {

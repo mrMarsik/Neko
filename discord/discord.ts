@@ -51,7 +51,11 @@ function handleVoice(bridgePacket: T.VoicePacket) {
 
 
 function handleTool(bridgePacket: T.ToolPacket) {
+  const context = bridgePacket.context
+  const data = bridgePacket.data
 
+  if(!context || !data) return
+  playAudio(data, context)
 }
 
 

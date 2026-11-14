@@ -1,5 +1,5 @@
 import { startPort } from './port'
-import { startDarkPort } from './dark-port'
+import { sendDark, startDarkPort } from './dark-port'
 import { startMediaServer } from './media-server'
 
 import { download } from './courier/courier'
@@ -14,13 +14,14 @@ import {
 
 import type {
   Packet,
-  ToolPacket
+  ToolPacket,
+  ResultPacket
 } from '../types'
 
 
 async function receive(packet: Packet) {
   if (packet.type !== 'tool') return
-
+  console.log('REC')
   switch (packet.tool) {
     case 'getMedia':
       await handleGetMedia(packet)
@@ -46,7 +47,7 @@ async function darkReceive(packet: Packet) {
 
 async function handleSaveMedia(packet: ToolPacket) {
   const url = packet.data.url
-
+console.log('saveMedia')
   if (typeof url !== 'string') return
 
 
@@ -77,7 +78,23 @@ async function handleSaveMedia(packet: ToolPacket) {
     description: description.description,
     tags: description.tags
   })
+  
+  const resultPacket: ResultPacket = {
+    type: 'result',
 
+    to: 'neko',
+
+    taskId: packet.taskId,
+    stepId: packet.stepId,
+    success: true,
+    data: {
+  mediaUrl: `http://localhost:7000/media/${media.id}`
+},
+
+    timestamp: Date.now()
+  }
+
+  sendDark(resultPacket)
 
   console.log('saved:', media.name)
 }

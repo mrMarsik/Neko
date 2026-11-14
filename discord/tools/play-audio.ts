@@ -9,26 +9,29 @@ import {
 
 import { client } from '../client'
 
-import type { Address } from '../../types'
+import type { ClientContext } from '../../types'
 
 
 export async function playAudio(
-  address: Address,
-  filePath: string
+  data: Record<string, unknown>,
+  context: ClientContext
 ) {
-  if (!address.guildId) return
 
+  const mediaUrl = data.mediaUrl
 
-  const guild = await client.guilds.fetch(
-    address.guildId
-  )
+  if (!context.userId) return 
+  if (!context.channelId) return
+  if (typeof mediaUrl !== 'string') return  
 
+  const channel = await client.channels.fetch(context.channelId)
+  if (!channel || !('guild' in channel)) return
+
+  const guild = channel.guild
   const member = await guild.members.fetch(
-    address.userId
+    context.userId
   )
 
   const voiceChannel = member.voice.channel
-
   if (!voiceChannel) return
 
 
@@ -49,7 +52,7 @@ export async function playAudio(
   const player = createAudioPlayer()
 
   const resource = createAudioResource(
-    filePath
+    mediaUrl
   )
 
 

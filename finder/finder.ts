@@ -43,10 +43,10 @@ async function handleTool(bridgePacket: ToolPacket) {
     to: 'neko',
 
     taskId: bridgePacket.taskId,
-
+    stepId: bridgePacket.stepId,
     success: true,
     data: { url: url },
-
+    
     timestamp: Date.now()
   }
 
